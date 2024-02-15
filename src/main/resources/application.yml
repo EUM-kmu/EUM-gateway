@@ -1,0 +1,57 @@
+
+server:
+  port: 8000
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    config:
+      uri: http://localhost:8888
+      name: msa-architecture-config-server
+      enabled: false
+    gateway:
+      default-filters:
+        - name: GlobalFilter
+          args:
+            baseMessage: Spring cloud gateway Global Filter
+            preLogger: true
+            postLogger: true
+
+      routes:
+        - id: haetsal-service
+          uri: http://localhost:80
+          predicates:
+            - Path=/api/v1/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - AuthUserAuthorizationHeaderFilter
+        - id: user-service
+          uri: http://localhost:8081/
+          predicates:
+            - Path=/auth-service/api/v2/auth/signin/local
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+        - id: user-service
+          uri: http://localhost:8081/
+          predicates:
+            - Path=/auth-service/api/v2/auth/kakao
+            - Method=POST
+          filters:
+            - RemoveRequestHeader=Cookie
+        - id: auth-service
+          uri: http://localhost:8081/
+          predicates:
+            - Path=/auth-service/api/v2
+            - Method=GET
+          filters:
+            - RemoveRequestHeader=Cookie
+            - AuthorizationHeaderFilter
+
