@@ -1,12 +1,15 @@
 package com.eum.gateway.filter;
 
+import com.eum.gateway.jwt.JwtService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -19,6 +22,9 @@ import java.security.Key;
 
 @Component
 @Slf4j
+/**
+ * 햇살 서버 접근 전용 필터
+ */
 public class AuthUserAuthorizationHeaderFilter extends AbstractGatewayFilterFactory<AuthUserAuthorizationHeaderFilter.Config> {
     Environment env;
     private static final String USER_ID = "userId";
@@ -26,6 +32,8 @@ public class AuthUserAuthorizationHeaderFilter extends AbstractGatewayFilterFact
     private static final String ROLE = "role";
     private static final String BEARER_TYPE = "Bearer";
     private final Key key;
+    @Autowired
+    private JwtService jwtService;
     public AuthUserAuthorizationHeaderFilter(Environment env){
         super(Config.class);
         this.env = env;
@@ -50,10 +58,13 @@ public class AuthUserAuthorizationHeaderFilter extends AbstractGatewayFilterFact
             String authorizationHeader = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
             String jwt = authorizationHeader.replace(BEARER_TYPE, "");
             log.info(jwt);
-//            if (!isJwtValid(jwt)) {
-//                return onError(exchange, "JWT token is not valid", HttpStatus.UNAUTHORIZED);
-//            }
-            Claims claims = isJwtValid(jwt);
+
+            Claims claims;
+            try {
+                claims = jwtService.isJwtValid(jwt);
+            } catch (RuntimeException e) {
+                return onError(exchange, e.getMessage(), HttpStatus.UNAUTHORIZED);
+            }
             if(!claims.get(ROLE).equals("ROLE_USER") ){
                 return onError(exchange,"프로필 , 계좌 미생성 유저",HttpStatus.FORBIDDEN);
             }
@@ -66,35 +77,17 @@ public class AuthUserAuthorizationHeaderFilter extends AbstractGatewayFilterFact
 //            return chain.filter(exchange);
         };
     }
-    private Claims isJwtValid(String jwt) {
-        try {
-            Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody();
-            log.info(claims.get(USER_ID,Long.class).toString());
-            return claims;
-        }catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.info("Invalid JWT Token", e);
-            // 401 Unauthorized
-            throw e;
-        } catch (ExpiredJwtException e) {
-            log.info("Expired JWT Token", e);
-            // 401 Expired
-            throw e;
-        } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT Token", e);
-            // 400 Bad Request
-            throw e;
-        } catch (IllegalArgumentException e) {
-            log.info("JWT claims string is empty.", e);
-            // 400 Bad Request
-            throw e;
-        }
-    }
+
     //Mono, Flux -> spring webFlux : 클라이언트에서 요청이 들어왔을 때 반환 시켜줌
     private Mono<Void> onError(ServerWebExchange exchange, String error, HttpStatus httpStatus) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(httpStatus);
-        log.error(error);
-        return response.setComplete();
+        response.getHeaders().add(HttpHeaders.CONTENT_TYPE, "application/json");
+
+        String errorMessage = "{\"error\": \"" + error + "\"}";
+        DataBuffer buffer = response.bufferFactory().wrap(errorMessage.getBytes());
+
+        return response.writeWith(Mono.just(buffer));
     }
 
 }
