@@ -1,5 +1,6 @@
 package com.eum.gateway.jwt;
 
+import com.eum.gateway.exception.TokenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -29,19 +30,19 @@ public class JwtService {
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token", e);
             // 401 Unauthorized
-            throw new RuntimeException("Invalid JWT Token: " + e.getMessage(), e);
+            throw new TokenException("Invalid JWT Token: " + e.getMessage(), e);
         } catch (ExpiredJwtException e) {
             log.info("Expired JWT Token", e);
             // 401 Expired
-            throw new RuntimeException("Expired JWT Token: " + e.getMessage(), e);
+            throw new TokenException("Expired JWT Token: " + e.getMessage(), e);
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT Token", e);
             // 400 Bad Request
-            throw new RuntimeException("Unsupported JWT Token: " + e.getMessage(), e);
+            throw new TokenException("Unsupported JWT Token: " + e.getMessage(), e);
         } catch (IllegalArgumentException e) {
             log.info("JWT claims string is empty.", e);
             // 400 Bad Request
-            throw new RuntimeException("JWT claims string is empty: " + e.getMessage(), e);
+            throw new TokenException("JWT claims string is empty: " + e.getMessage(), e);
         }
     }
 

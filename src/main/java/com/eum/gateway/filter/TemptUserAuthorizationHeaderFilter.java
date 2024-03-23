@@ -1,7 +1,9 @@
 package com.eum.gateway.filter;
 
+import com.eum.gateway.exception.TokenException;
 import com.eum.gateway.jwt.JwtService;
-import io.jsonwebtoken.*;
+import com.eum.gateway.response.ErrorResponse;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -9,14 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
 
 import java.security.Key;
 
@@ -52,7 +50,7 @@ public class TemptUserAuthorizationHeaderFilter extends AbstractGatewayFilterFac
             ServerHttpRequest request = exchange.getRequest();
 
             if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                return onError(exchange, "no authorization header", HttpStatus.UNAUTHORIZED);
+                return ErrorResponse.onError(exchange,401,"G021", "no authorization header","헤더에 값을 넣어주세요", HttpStatus.UNAUTHORIZED);
             }
             String authorizationHeader = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
             String jwt = authorizationHeader.replace(BEARER_TYPE, "");
@@ -61,8 +59,8 @@ public class TemptUserAuthorizationHeaderFilter extends AbstractGatewayFilterFac
             Claims claims;
             try {
                 claims = jwtService.isJwtValid(jwt);
-            } catch (RuntimeException e) {
-                return onError(exchange, "토큰 에러", HttpStatus.UNAUTHORIZED);
+            } catch (TokenException e) {
+                return ErrorResponse.onError(exchange,401,"G020","Invalid Token Exception", e.getMessage(), HttpStatus.UNAUTHORIZED);
             }
 
             ServerHttpRequest modifiedRequest = request.mutate()
@@ -74,17 +72,6 @@ public class TemptUserAuthorizationHeaderFilter extends AbstractGatewayFilterFac
         };
     }
 
-    //Mono, Flux -> spring webFlux : 클라이언트에서 요청이 들어왔을 때 반환 시켜줌
-    private Mono<Void> onError(ServerWebExchange exchange, String error, HttpStatus httpStatus) {
-        ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(httpStatus);
-        response.getHeaders().add(HttpHeaders.CONTENT_TYPE, "application/json");
-
-        String errorMessage = "{\"error\": \"" + error + "\"}";
-        DataBuffer buffer = response.bufferFactory().wrap(errorMessage.getBytes());
-
-        return response.writeWith(Mono.just(buffer));
-    }
 
 
 }

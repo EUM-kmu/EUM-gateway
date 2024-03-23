@@ -1,6 +1,7 @@
 package com.eum.gateway.filter;
 
 import com.eum.gateway.jwt.JwtService;
+import com.eum.gateway.response.ErrorResponse;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -53,7 +54,7 @@ public class AuthUserAuthorizationHeaderFilter extends AbstractGatewayFilterFact
 //            ServerHttpResponse response = exchange.getResponse();
 
             if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                return onError(exchange,"no authorization header", HttpStatus.UNAUTHORIZED);
+                return ErrorResponse.onError(exchange,401,"G021", "no authorization header","헤더에 값을 넣어주세요", HttpStatus.UNAUTHORIZED);
             }
             String authorizationHeader = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
             String jwt = authorizationHeader.replace(BEARER_TYPE, "");
@@ -63,10 +64,10 @@ public class AuthUserAuthorizationHeaderFilter extends AbstractGatewayFilterFact
             try {
                 claims = jwtService.isJwtValid(jwt);
             } catch (RuntimeException e) {
-                return onError(exchange, "토큰 에러", HttpStatus.UNAUTHORIZED);
+                return ErrorResponse.onError(exchange,401,"G020","Invalid Token Exception", e.getMessage(), HttpStatus.UNAUTHORIZED);
             }
             if(!claims.get(ROLE).equals("ROLE_USER") ){
-                return onError(exchange,"프로필 , 계좌 미생성 유저",HttpStatus.FORBIDDEN);
+                return ErrorResponse.onError(exchange,403,"G008","Forbidden Exception","프로필 , 계좌 미생성 유저",HttpStatus.FORBIDDEN);
             }
             ServerHttpRequest modifiedRequest = request.mutate()
                     .header("userId", claims.get(USER_ID, Long.class).toString())
@@ -76,18 +77,6 @@ public class AuthUserAuthorizationHeaderFilter extends AbstractGatewayFilterFact
             return chain.filter(exchange.mutate().request(modifiedRequest).build());
 //            return chain.filter(exchange);
         };
-    }
-
-    //Mono, Flux -> spring webFlux : 클라이언트에서 요청이 들어왔을 때 반환 시켜줌
-    private Mono<Void> onError(ServerWebExchange exchange, String error, HttpStatus httpStatus) {
-        ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(httpStatus);
-        response.getHeaders().add(HttpHeaders.CONTENT_TYPE, "application/json");
-
-        String errorMessage = "{\"error\": \"" + error + "\"}";
-        DataBuffer buffer = response.bufferFactory().wrap(errorMessage.getBytes());
-
-        return response.writeWith(Mono.just(buffer));
     }
 
 }
