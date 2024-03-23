@@ -63,7 +63,7 @@ public class AuthUserAuthorizationHeaderFilter extends AbstractGatewayFilterFact
             try {
                 claims = jwtService.isJwtValid(jwt);
             } catch (RuntimeException e) {
-                return onError(exchange, e.getMessage(), HttpStatus.UNAUTHORIZED);
+                return onError(exchange, "토큰 에러", HttpStatus.UNAUTHORIZED);
             }
             if(!claims.get(ROLE).equals("ROLE_USER") ){
                 return onError(exchange,"프로필 , 계좌 미생성 유저",HttpStatus.FORBIDDEN);

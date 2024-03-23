@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -61,7 +62,7 @@ public class TemptUserAuthorizationHeaderFilter extends AbstractGatewayFilterFac
             try {
                 claims = jwtService.isJwtValid(jwt);
             } catch (RuntimeException e) {
-                return onError(exchange, e.getMessage(), HttpStatus.UNAUTHORIZED);
+                return onError(exchange, "토큰 에러", HttpStatus.UNAUTHORIZED);
             }
 
             ServerHttpRequest modifiedRequest = request.mutate()
@@ -77,8 +78,13 @@ public class TemptUserAuthorizationHeaderFilter extends AbstractGatewayFilterFac
     private Mono<Void> onError(ServerWebExchange exchange, String error, HttpStatus httpStatus) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(httpStatus);
-        log.error(error);
-        return response.setComplete();
+        response.getHeaders().add(HttpHeaders.CONTENT_TYPE, "application/json");
+
+        String errorMessage = "{\"error\": \"" + error + "\"}";
+        DataBuffer buffer = response.bufferFactory().wrap(errorMessage.getBytes());
+
+        return response.writeWith(Mono.just(buffer));
     }
+
 
 }
