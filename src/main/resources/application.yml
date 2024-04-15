@@ -17,25 +17,6 @@ spring:
       name: msa-architecture-config-server
       enabled: false
     gateway:
-#      globalcors:
-#        cors-configurations:
-#          '[/**]':
-#            allowedOrigins: 'http://localhost:3000'
-#            allow-credentials: true # JWT 나 쿠키를 사용해 메시지를 보내야 할 경우 true
-#            allowedHeaders: '*'
-#            allowedMethods:
-#              - PUT
-#              - GET
-#              - POST
-#              - DELETE
-#              - OPTIONS
-#      default-filters:
-#        - name: GlobalFilter
-#          args:
-#            baseMessage: Spring cloud gateway Global Filter
-#            preLogger: true
-#            postLogger: true
-
       routes:
         - id: haetsal-service
           uri: http://localhost:80
