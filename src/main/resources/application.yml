@@ -1,6 +1,6 @@
 
 server:
-  port: 8000
+  port: 80
 
 eureka:
   client:
@@ -19,7 +19,7 @@ spring:
     gateway:
       routes:
         - id: haetsal-service
-          uri: http://localhost:80
+          uri: http://localhost:8000
           predicates:
             - Path=/haetsal-service/**
           filters:
@@ -32,7 +32,7 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
         - id: auth-service
-          uri: http://localhost:80/
+          uri: http://localhost:8000/
           predicates:
             - Path=/auth-service/api/v2/profile
             - Method=POST
