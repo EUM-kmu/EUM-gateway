@@ -39,3 +39,10 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - TemptUserAuthorizationHeaderFilter
+        - id: chat-service
+          uri: http://223.130.141.109:5000/
+          predicates:
+            - Path=/chat-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - AuthUserAuthorizationHeaderFilter
