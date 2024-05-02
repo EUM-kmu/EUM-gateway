@@ -13,41 +13,53 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Configuration
 public class PreFlightCorsConfiguration {
+
     private static final String ALLOWED_HEADERS = "x-requested-with, Authorization, Content-Type";
     private static final String ALLOWED_METHODS = "GET, PUT, POST, DELETE, OPTIONS";
-    private static final String ALLOWED_ORIGIN = "http://localhost:3000";
     private static final String MAX_AGE = "3600";
-
-    // true 로 설정할 경우 allowed_origin 에 '*' 을 입력할 수 없고,
-    //http://localhost:3000 이렇게 특정해줘야 한다.
     private static final String ALLOWED_CREDENTIALS = "true";
 
+    // 허용할 Origin 목록을 HashSet으로 관리
+    private static final Set<String> allowedOrigins = new HashSet<>();
+    static {
+        allowedOrigins.add("http://localhost:3000");
+        allowedOrigins.add("https://hanmaeul.vercel.app");
+        // 다른 허용할 Origin 추가
+    }
 
     @Bean
     public WebFilter corsFilter() {
-
         return (ServerWebExchange ctx, WebFilterChain chain) -> {
 
             ServerHttpRequest request = ctx.getRequest();
 
+            // 요청이 Preflight 요청인지 확인
             if (CorsUtils.isPreFlightRequest(request)) {
                 ServerHttpResponse response = ctx.getResponse();
                 HttpHeaders headers = response.getHeaders();
-                headers.add("Access-Control-Allow-Origin", ALLOWED_ORIGIN);
-                headers.add("Access-Control-Allow-Methods", ALLOWED_METHODS);
-                headers.add("Access-Control-Max-Age", MAX_AGE);
-                headers.add("Access-Control-Allow-Headers",ALLOWED_HEADERS);
-                headers.add("Access-Control-Allow-Credentials",ALLOWED_CREDENTIALS);
 
-                if (request.getMethod() == HttpMethod.OPTIONS) {
-                    response.setStatusCode(HttpStatus.OK);
-                    return Mono.empty();
+                // 요청 Origin이 허용 목록에 있는지 확인
+                String requestOrigin = request.getHeaders().getOrigin();
+                if (requestOrigin != null && allowedOrigins.contains(requestOrigin)) {
+                    // 허용된 Origin이라면 해당 Origin을 반환
+                    headers.add("Access-Control-Allow-Origin", requestOrigin);
+                    headers.add("Access-Control-Allow-Methods", ALLOWED_METHODS);
+                    headers.add("Access-Control-Max-Age", MAX_AGE);
+                    headers.add("Access-Control-Allow-Headers", ALLOWED_HEADERS);
+                    headers.add("Access-Control-Allow-Credentials", ALLOWED_CREDENTIALS);
+
+                    if (request.getMethod() == HttpMethod.OPTIONS) {
+                        response.setStatusCode(HttpStatus.OK);
+                        return Mono.empty();
+                    }
                 }
             }
             return chain.filter(ctx);
         };
     }
-
 }
