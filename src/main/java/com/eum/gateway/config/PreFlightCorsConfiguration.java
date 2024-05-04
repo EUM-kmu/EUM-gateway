@@ -29,6 +29,7 @@ public class PreFlightCorsConfiguration {
     static {
         allowedOrigins.add("http://localhost:3000");
         allowedOrigins.add("https://hanmaeul.vercel.app");
+        allowedOrigins.add("https://k-eum2023.web.app");
         // 다른 허용할 Origin 추가
     }
 
