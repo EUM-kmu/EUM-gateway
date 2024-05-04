@@ -29,6 +29,7 @@ public class TemptUserAuthorizationHeaderFilter extends AbstractGatewayFilterFac
     private static final String UID = "uid";
     private static final String ROLE = "role";
     private static final String BEARER_TYPE = "Bearer";
+    private static final String PREVIOUS_USERID = "previousUserId";
     private final Key key;
     @Autowired
     private  JwtService jwtService;
@@ -65,6 +66,7 @@ public class TemptUserAuthorizationHeaderFilter extends AbstractGatewayFilterFac
 
             ServerHttpRequest modifiedRequest = request.mutate()
                     .header("userId", claims.get(USER_ID, Long.class).toString())
+                    .header("previousUserId", claims.get(PREVIOUS_USERID, Long.class).toString())
                     .build();
 
             // 수정된 요청으로 체인 실행
