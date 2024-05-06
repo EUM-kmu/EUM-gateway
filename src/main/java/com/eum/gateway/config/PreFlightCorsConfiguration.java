@@ -19,7 +19,7 @@ import java.util.Set;
 @Configuration
 public class PreFlightCorsConfiguration {
 
-    private static final String ALLOWED_HEADERS = "x-requested-with, Authorization, Content-Type";
+    private static final String ALLOWED_HEADERS = "*";
     private static final String ALLOWED_METHODS = "GET, PUT, POST, DELETE, OPTIONS,PATCH";
     private static final String MAX_AGE = "3600";
     private static final String ALLOWED_CREDENTIALS = "true";
