@@ -13,32 +13,32 @@ jobs:
     # 우리가 등록한 Github Self Hosted Runner 에서 실행합니다
     runs-on: eum-runner
     # 잡의 구체적인 단계입니다
-    steps:
-      # 처음 _work 폴더에 github actions 프로그램이 파일을 수정할 권한이 없어서, 권한을 부여해 주기 위한 작업입니다
-      # 이 명령을 통해서 이미 있는 폴더에 git pull 을 사용할 수 있습니다
-      - name: change permission
-        # 마지막 jwp-shopping-order 는 repository 이름입니다.
-        run: |
-          sudo chown -R ubuntu:ubuntu /home/ubuntu/actions-runner/_work/EUM-gateway
+    # steps:
+    #   # 처음 _work 폴더에 github actions 프로그램이 파일을 수정할 권한이 없어서, 권한을 부여해 주기 위한 작업입니다
+    #   # 이 명령을 통해서 이미 있는 폴더에 git pull 을 사용할 수 있습니다
+    #   - name: change permission
+    #     # 마지막 jwp-shopping-order 는 repository 이름입니다.
+    #     run: |
+    #       sudo chown -R ubuntu:ubuntu /home/ubuntu/actions-runner/_work/EUM-gateway
 
-      # git clone, git pull, git fetch 같은 작업을 단순화 하기 위한 action 입니다. actions/checkout@v3
-      # 미리 다른 개발자가 만들어둔 action 을 사용한다는 의미입니다
-      - uses: actions/checkout@v3
-      # bootjar 를 만들고, 실행시키는 과정을 담고 있습니다
-      - name: gradle bootjar
-        # 처음에 ./gradlew 파일을 실행할 수 없어서, chmod 로 실행 가능하도록 바꿔줍니다
-        run: |
-          chmod +x ./gradlew
-          ./gradlew bootjar
-        # 80 번 포트가 이미 있다면, 그 프로그램을 종료합니다
-      - name: kill 80 port if exist
-        run: |
-          if sudo lsof -i :80; then
-            echo "Port 80 is already in use. Killing the process..."
-            sudo lsof -i :80 | awk 'NR!=1 {print $2}' | sudo xargs kill -9
-          fi
+    #   # git clone, git pull, git fetch 같은 작업을 단순화 하기 위한 action 입니다. actions/checkout@v3
+    #   # 미리 다른 개발자가 만들어둔 action 을 사용한다는 의미입니다
+    #   - uses: actions/checkout@v3
+    #   # bootjar 를 만들고, 실행시키는 과정을 담고 있습니다
+    #   - name: gradle bootjar
+    #     # 처음에 ./gradlew 파일을 실행할 수 없어서, chmod 로 실행 가능하도록 바꿔줍니다
+    #     run: |
+    #       chmod +x ./gradlew
+    #       ./gradlew bootjar
+    #     # 80 번 포트가 이미 있다면, 그 프로그램을 종료합니다
+    #   - name: kill 80 port if exist
+    #     run: |
+    #       if sudo lsof -i :80; then
+    #         echo "Port 80 is already in use. Killing the process..."
+    #         sudo lsof -i :80 | awk 'NR!=1 {print $2}' | sudo xargs kill -9
+    #       fi
 
-      # 스프링 프로그램을 실행합니다
-      - name: deploy
-        run: |
-          sudo java -jar build/libs/EUM-gateway-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod &
+    #   # 스프링 프로그램을 실행합니다
+    #   - name: deploy
+    #     run: |
+    #       sudo java -jar build/libs/EUM-gateway-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod &
