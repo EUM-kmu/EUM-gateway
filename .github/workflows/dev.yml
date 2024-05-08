@@ -51,10 +51,7 @@ jobs:
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.5.4
         with:
-          host: ${{ secrets.DEV_SSH_IP }}
-          username: ${{ secrets.DEV_SSH_USER }}
           ssh-private-key: ${{ secrets.DEV_SSH_PASSWORD }}
-          port: 22
       - name: SCP transfer
         run: scp *.jar ${{ secrets.DEV_SSH_USER }}@${{ secrets.DEV_SSH_IP }}:~/cicd
       - name: Execute remote commands
