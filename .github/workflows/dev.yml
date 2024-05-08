@@ -1,33 +1,20 @@
+
 on:
   push:
-    branches: [ dev-test ]
+    branches:
+      - 'dev-test'
+  workflow_dispatch:
 
 jobs:
   deploy:
-    runs-on: self-hosted	# self-hosted 로 변경 (macOS라고 작성해도 상관없습니다.)
-  build:
-
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
+    runs-on: self-hosted
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
 
-    # Configure Gradle for optimal use in GiHub Actions, including caching of downloaded dependencies.
-    # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+      - uses: actions/checkout@v2
+        with:
+          ref: server/deploy
 
-    - name: Build with Gradle Wrapper
-      run: ./gradlew build -x test
-    - name: Upload artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: cicdsample
-        path: build/libs/*.jar
+      - name: Change Directory and Docker compose
+        run: |                                                                                        
+          sudo docker compose up -d --build
