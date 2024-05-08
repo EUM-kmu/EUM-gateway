@@ -11,7 +11,7 @@ jobs:
   # 이 job 의 이름입니다
   deploy:
     # 우리가 등록한 Github Self Hosted Runner 에서 실행합니다
-    runs-on: eum-runner
+    runs-on: self-hosted
     # 잡의 구체적인 단계입니다
     # steps:
     #   # 처음 _work 폴더에 github actions 프로그램이 파일을 수정할 권한이 없어서, 권한을 부여해 주기 위한 작업입니다
