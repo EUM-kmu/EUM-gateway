@@ -51,7 +51,7 @@ jobs:
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.5.4
         with:
-          host: ${{ secrets.SERVER_IP }}          
+          host: ${{ secrets.HOSTNAME }}          
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
