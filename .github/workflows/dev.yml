@@ -55,12 +55,12 @@ jobs:
           username: ${{ secrets.DEV_SSH_USER }}
           ssh-private-key: ${{ secrets.DEV_SSH_PASSWORD }}
           port: 22
-            - name: SCP transfer
-              run: scp *.jar ${{ secrets.DEV_SSH_USER }}@${{ secrets.DEV_SSH_IP }}:~/cicd
-            - name: Execute remote commands
-              run: |
-                ssh ${{ secrets.DEV_SSH_USER }}@${{ secrets.DEV_SSH_IP }} "sudo fuser -k 80/tcp"
-                ssh ${{ secrets.DEV_SSH_USER }}@${{ secrets.DEV_SSH_IP }} "sudo nohup java -jar ~/cicd/*.jar &"
+      - name: SCP transfer
+        run: scp *.jar ${{ secrets.DEV_SSH_USER }}@${{ secrets.DEV_SSH_IP }}:~/cicd
+      - name: Execute remote commands
+        run: |
+          ssh ${{ secrets.DEV_SSH_USER }}@${{ secrets.DEV_SSH_IP }} "sudo fuser -k 80/tcp"
+          ssh ${{ secrets.DEV_SSH_USER }}@${{ secrets.DEV_SSH_IP }} "nohup java -jar ~/cicd/*.jar &"
     # - name: Deploy
     #   uses: appleboy/ssh-action@master
     #   with:
