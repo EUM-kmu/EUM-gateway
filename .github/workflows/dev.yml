@@ -48,28 +48,23 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: cicdsample
+      # - name: Setup SSH
+      #   uses: webfactory/ssh-agent@v0.5.4
+      #   with:
+      #     host: ${{ secrets.HOSTNAME }}
+      #     username: ${{ secrets.SSH_USER }}
+      #     ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     port: 22
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.5.4
         with:
-          host: ${{ secrets.HOSTNAME }}
-          username: ${{ secrets.SSH_USER }}
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            sudo docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
-            sudo docker stop $(sudo docker ps -a -q)
-            sudo docker rm -f $(sudo docker ps -a -q)
-            sudo docker pull ${{ secrets.DOCKER_REPO }}/tagname
-            sudo docker run -d -p 8081:80 ${{ secrets.DOCKER_REPO }}/tagname
-            sudo docker image prune -f
-            ps -ef | grep java
-    # - name: Deploy
-    #   uses: appleboy/ssh-action@master
-    #   with:
-    #       host: ${{ secrets.REMOTE_IP }}
-    #       username: ${{ secrets.REMOTE_SSH_ID }}
-    #       key: ${{ secrets.REMOTE_SSH_KEY }}
-    #       port: ${{ secrets.REMOTE_SSH_PORT }}
-    #       script: |
-    #         whoami
-    #         git pull origin main
+      - name: SCP transfer
+        run: scp *.jar ${{ secrets.HOSTNAME }}@${{ secrets.SSH_USER }}:~/cicd
+      - name: Execute remote commands
+        run: |
+          ssh ${{ secrets.HOSTNAME }}@${{ secrets.SSH_USER }} "sudo fuser -k 8082/tcp"
+          ssh ${{ secrets.HOSTNAME }}@${{ secrets.SSH_USER }} "sudo nohup java -jar ~/cicd/*.jar &"
+
+
+
