@@ -35,6 +35,11 @@ jobs:
 
     - name: Build with Gradle Wrapper
       run: ./gradlew build -x test
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: cicdsample
+        path: build/libs/*.jar
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -55,7 +60,7 @@ jobs:
             sudo docker stop $(sudo docker ps -a -q)
             sudo docker rm -f $(sudo docker ps -a -q)
             sudo docker pull ${{ secrets.DOCKER_REPO }}/tagname
-            sudo docker run -d -p 80:80 ${{ secrets.DOCKER_REPO }}/tagname
+            sudo docker run -d -p 8081:80 ${{ secrets.DOCKER_REPO }}/tagname
             sudo docker image prune -f
             ps -ef | grep java
     # - name: Deploy
