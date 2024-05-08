@@ -51,18 +51,16 @@ jobs:
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.5.4
         with:
-          host: ${{ secrets.HOSTNAME }}
-          username: ${{ secrets.SSH_USER }}
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          host: ${{ secrets.DEV_SSH_IP }}
+          username: ${{ secrets.DEV_SSH_USER }}
+          ssh-private-key: ${{ secrets.DEV_SSH_PASSWORD }}
           port: 22
-          script: |
-            sudo docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
-            sudo docker stop $(sudo docker ps -a -q)
-            sudo docker rm -f $(sudo docker ps -a -q)
-            sudo docker pull ${{ secrets.DOCKER_REPO }}/tagname
-            sudo docker run -d -p 8081:80 ${{ secrets.DOCKER_REPO }}/tagname
-            sudo docker image prune -f
-            ps -ef | grep java
+            - name: SCP transfer
+              run: scp *.jar ${{ secrets.DEV_SSH_USER }}@${{ secrets.DEV_SSH_IP }}:~/cicd
+            - name: Execute remote commands
+              run: |
+                ssh ${{ secrets.DEV_SSH_USER }}@${{ secrets.DEV_SSH_IP }} "sudo fuser -k 80/tcp"
+                ssh ${{ secrets.DEV_SSH_USER }}@${{ secrets.DEV_SSH_IP }} "sudo nohup java -jar ~/cicd/*.jar &"
     # - name: Deploy
     #   uses: appleboy/ssh-action@master
     #   with:
