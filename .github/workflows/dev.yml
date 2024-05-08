@@ -58,16 +58,16 @@ jobs:
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.5.4
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          host: ${{ secrets.HOSTNAME }}
-          username: ${{ secrets.SSH_USER }}
+          ssh-private-key: ${{ secrets.DEV_SSH_PASSWORD }}
+          host: ${{ secrets.DEV_SSH_IP }}
+          username: ${{ secrets.DEV_SSH_USER }}
           port: 22
-      - name: SCP transfer
-        run: scp *.jar ${{ secrets.HOSTNAME }}@${{ secrets.SSH_USER }}:~/cicd
-      - name: Execute remote commands
-        run: |
-          ssh ${{ secrets.HOSTNAME }}@${{ secrets.SSH_USER }} "sudo fuser -k 8082/tcp"
-          ssh ${{ secrets.HOSTNAME }}@${{ secrets.SSH_USER }} "sudo nohup java -jar ~/cicd/*.jar &"
+      # - name: SCP transfer
+      #   run: scp *.jar ${{ secrets.HOSTNAME }}@${{ secrets.SSH_USER }}:~/cicd
+      # - name: Execute remote commands
+      #   run: |
+      #     ssh ${{ secrets.HOSTNAME }}@${{ secrets.SSH_USER }} "sudo fuser -k 8082/tcp"
+      #     ssh ${{ secrets.HOSTNAME }}@${{ secrets.SSH_USER }} "sudo nohup java -jar ~/cicd/*.jar &"
 
 
 
