@@ -1,6 +1,6 @@
 on:
   push:
-    branches: [ runner-test-release/ec2 ]
+    branches: [ dev-test ]
 
 jobs:
   deploy:
