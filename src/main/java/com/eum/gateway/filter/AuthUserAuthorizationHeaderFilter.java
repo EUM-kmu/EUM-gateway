@@ -34,6 +34,7 @@ public class AuthUserAuthorizationHeaderFilter extends AbstractGatewayFilterFact
     private static final String BEARER_TYPE = "Bearer";
     private final Key key;
     private static final String PREVIOUS_USERID = "previousUserId";
+    private static final String DELETED = "deleted";
     @Autowired
     private JwtService jwtService;
     public AuthUserAuthorizationHeaderFilter(Environment env){
