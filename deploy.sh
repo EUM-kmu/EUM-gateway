@@ -1,6 +1,6 @@
 #!/bin/sh
 
-port=`lsof -i :8082 -t`
+port=`lsof -i :80 -t`
 
 kill -9 $port
 git checkout dev

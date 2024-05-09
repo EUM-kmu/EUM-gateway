@@ -53,3 +53,7 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - AuthUserAuthorizationHeaderFilter
+        - id: chat-websocket
+          uri: ws://223.130.141.109:5000
+          predicates:
+            - Path=/ws/init/**
