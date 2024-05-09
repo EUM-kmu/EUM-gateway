@@ -7,7 +7,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://223.130.146.39:8761/eureka
 spring:
   application:
     name: gateway-service
@@ -53,3 +53,7 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - AuthUserAuthorizationHeaderFilter
+        - id: chat-websocket
+          uri: ws://223.130.141.109:5000
+          predicates:
+            - Path=/ws/init/**
