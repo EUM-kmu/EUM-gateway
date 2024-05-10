@@ -47,13 +47,13 @@ spring:
             - RemoveRequestHeader=Cookie
             - TemptUserAuthorizationHeaderFilter
         - id: chat-service
-          uri: http://223.130.141.109:5000/
+          uri: https://chat.haetsal.com/
           predicates:
             - Path=/chat-service/**
           filters:
             - RemoveRequestHeader=Cookie
             - AuthUserAuthorizationHeaderFilter
         - id: chat-websocket
-          uri: ws://223.130.141.109:5000
+          uri: wss://chat.haetsal.com/
           predicates:
             - Path=/ws/init/**
