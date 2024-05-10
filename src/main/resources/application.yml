@@ -19,20 +19,20 @@ spring:
     gateway:
       routes:
         - id: haetsal-service
-          uri: http://223.130.146.39:8000
+          uri: http://localhost:8000
           predicates:
             - Path=/haetsal-service/**
           filters:
             - RemoveRequestHeader=Cookie
             - AuthUserAuthorizationHeaderFilter
         - id: auth-service
-          uri: http://223.130.146.39:8081/
+          uri: http://localhost:8081/
           predicates:
             - Path=/auth-service/api/v2/auth/**
           filters:
             - RemoveRequestHeader=Cookie
         - id: auth-service
-          uri: http://223.130.146.39:8000/
+          uri: http://localhost:8000/
           predicates:
             - Path=/auth-service/api/v2/profile
             - Method=POST
@@ -40,7 +40,7 @@ spring:
             - RemoveRequestHeader=Cookie
             - TemptUserAuthorizationHeaderFilter
         - id: auth-service
-          uri: http://223.130.146.39:8081/
+          uri: http://localhost:8081/
           predicates:
             - Path=/auth-service/api/v2/logOut
           filters:
