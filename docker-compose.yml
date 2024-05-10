@@ -9,7 +9,7 @@ services:
     ports:
       - "80:80"
     networks:
-      - eum-gateway
+      - eum-server
 
 networks:
-  eum-gateway:
+  eum-server:
