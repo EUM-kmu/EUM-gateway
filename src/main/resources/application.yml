@@ -16,6 +16,8 @@ springdoc:
         name: haetsal
       - url: /auth-service/docs
         name: auth
+      - url: /chat-service/docs
+        name: chat
 eureka:
   client:
     register-with-eureka: true
@@ -79,6 +81,10 @@ spring:
           uri: http://localhost:8081
           predicates:
             - Path=/auth-service/docs/**
+        - id: chat-swagger
+          uri: http://localhost:8080
+          predicates:
+            - Path=/chat-service/docs/**
 
 
 
