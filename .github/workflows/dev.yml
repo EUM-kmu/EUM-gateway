@@ -52,7 +52,7 @@ jobs:
 
     # Docker hub 로 push
     - name: Docker Hub push
-      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/eum-dev
+      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/eum-dev:dev
   deploy:
     needs: build
     runs-on: ubuntu-latest
