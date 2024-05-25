@@ -1,4 +1,4 @@
-# This workflow uses actions that are not certified by GitHub.
+This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
 # separate terms of service, privacy policy, and support
 # documentation.
@@ -89,8 +89,8 @@ jobs:
             # sudo docker stop $(sudo docker ps -a -q)
             # sudo docker rm -f $(sudo docker ps -a -q)
             sudo docker pull solhee0912/eum-dev:lates
-            sudo docker run -d -p 80:80 --name gateway solhee0912/eum-dev:lates
-            # sudo docker-compose up -d
+            # sudo docker run -d -p 80:80 --name gateway solhee0912/eum-dev:lates
+            sudo docker-compose up -d
             sudo docker image prune -f
             ps -ef | grep java
 
