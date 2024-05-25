@@ -9,9 +9,9 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "dev-test" ]
   pull_request:
-    branches: [ "develop" ]
+    branches: [ "dev-test" ]
 
 jobs:
   build:
@@ -40,6 +40,19 @@ jobs:
       with:
         name: cicdsample
         path: build/libs/*.jar
+    - name: docker image build
+      run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/eum-dev
+
+    # DockerHub Login (push 하기 위해)
+    - name: docker login
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+    # Docker hub 로 push
+    - name: Docker Hub push
+      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/eum-dev
   deploy:
     needs: build
     runs-on: ubuntu-latest
