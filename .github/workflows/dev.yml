@@ -51,7 +51,7 @@ jobs:
 
     # Docker hub 로 push
     - name: Docker Hub push
-      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/eum-dev:lates
+      run: docker push solhee0912/eum-dev:lates
   deploy:
     needs: build
     runs-on: ubuntu-latest
