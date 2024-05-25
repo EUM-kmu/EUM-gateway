@@ -41,7 +41,7 @@ jobs:
         name: cicdsample
         path: build/libs/*.jar
     - name: docker image build
-      run: docker build . --file Dockerfile --tag {{ secrets.DOCKERHUB_USERNAME }}/eum-dev:lates
+      run: docker build . --file Dockerfile --tag solhee0912/eum-dev:lates
     # DockerHub Login (push 하기 위해)
     - name: docker login
       uses: docker/login-action@v2
@@ -51,7 +51,7 @@ jobs:
 
     # Docker hub 로 push
     - name: Docker Hub push
-      run: docker push {{ secrets.DOCKERHUB_USERNAME }}/eum-dev:lates
+      run: docker push solhee0912/eum-dev:lates
   deploy:
     needs: build
     runs-on: ubuntu-latest
@@ -71,8 +71,8 @@ jobs:
             sudo docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
             sudo docker stop $(sudo docker ps -a -q)
             sudo docker rm -f $(sudo docker ps -a -q)
-            sudo docker pull ${{ secrets.DOCKER_REPO }}/tagname
-            sudo docker run -d -p 8082:8082 ${{ secrets.DOCKER_REPO }}/tagname
+            sudo docker pull ${{ secrets.DOCKER_REPO }}/lates
+            sudo docker run -d -p 8082:8082 ${{ secrets.DOCKER_REPO }}/lates
             sudo docker image prune -f
             ps -ef | grep java
     # - name: Deploy
