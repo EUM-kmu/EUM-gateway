@@ -71,7 +71,7 @@ jobs:
         run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
       - name: Pull Docker image from Private Docker Hub
-        run: docker pull solhee0912/eum-dev:latest
+        run: docker pull solhee0912/eum-dev:lates
 
       - name: Deploy to server
         run: |
