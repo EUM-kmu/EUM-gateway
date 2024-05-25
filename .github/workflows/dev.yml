@@ -60,37 +60,35 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: cicdsample
-      - name: Setup SSH
+      - name: Login to Docker Hub
+        run: sudo docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      # - name: Pull Docker image from Private Docker Hub
+      #   run: docker pull solhee0912/eum-dev:lates
+
+      # - name: Deploy to server
+      #   run: |
+      #     # sudo docker stop $(sudo docker ps -a -q) || true
+      #     # sudo docker rm -f $(sudo docker ps -a -q) || true
+      #     sudo docker run -d -p 8082:8082 solhee0912/eum-dev:lates
+      #     sudo docker image prune -f
+      #     ps -ef | grep java
+      - name: deploy
         uses: webfactory/ssh-agent@v0.5.4
         with:
           host: ${{ secrets.DEV_SSH_IP }}          
           username: ${{ secrets.DEV_SSH_USER }}
           ssh-private-key: ${{ secrets.DEV_SSH_PASSWORD }}
           port: 22
-      - name: Login to Docker Hub
-        run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-
-      - name: Pull Docker image from Private Docker Hub
-        run: docker pull solhee0912/eum-dev:lates
-
-      - name: Deploy to server
-        run: |
-          # sudo docker stop $(sudo docker ps -a -q) || true
-          # sudo docker rm -f $(sudo docker ps -a -q) || true
-          sudo docker run -d -p 8082:8082 solhee0912/eum-dev:lates
-          sudo docker image prune -f
-          ps -ef | grep java
-
-      
-          # script: | 
-          #   sudo docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
-          #   sudo docker stop $(sudo docker ps -a -q)
-          #   sudo docker rm -f $(sudo docker ps -a -q)
-          #   sudo docker pull solhee0912/eum-dev:lates
-          #   sudo docker run -d -p 8082:8082 --name gateway solhee0912/eum-dev:lates
-          #   sudo docker-compose up -d
-          #   sudo docker image prune -f
-          #   ps -ef | grep java
+          script: | 
+            sudo docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+            # sudo docker stop $(sudo docker ps -a -q)
+            # sudo docker rm -f $(sudo docker ps -a -q)
+            sudo docker pull solhee0912/eum-dev:lates
+            sudo docker run -d -p 8082:8082 --name gateway solhee0912/eum-dev:lates
+            # sudo docker-compose up -d
+            sudo docker image prune -f
+            ps -ef | grep java
     # - name: Deploy
     #   uses: appleboy/ssh-action@master
     #   with:
