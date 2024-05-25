@@ -72,7 +72,7 @@ jobs:
             sudo docker stop $(sudo docker ps -a -q)
             sudo docker rm -f $(sudo docker ps -a -q)
             sudo docker pull ${{ secrets.DOCKER_REPO }}/tagname
-            sudo docker run -d -p 80:80 ${{ secrets.DOCKER_REPO }}/tagname
+            sudo docker run -d -p 8082:8082 ${{ secrets.DOCKER_REPO }}/tagname
             sudo docker image prune -f
             ps -ef | grep java
     # - name: Deploy
