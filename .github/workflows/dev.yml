@@ -78,7 +78,7 @@ jobs:
          with:
           host: ${{ secrets.DEV_SSH_IP }}
           username: ${{ secrets.DEV_SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key: ${{ secrets.DEV_SSH_PASSWORD }}
           port: 22
           script: |
             sudo docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
