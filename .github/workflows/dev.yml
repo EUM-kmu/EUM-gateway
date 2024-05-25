@@ -77,7 +77,7 @@ jobs:
         run: |
           # sudo docker stop $(sudo docker ps -a -q) || true
           # sudo docker rm -f $(sudo docker ps -a -q) || true
-          sudo docker run -d -p 8082:8082 solhee0912/eum-dev:latest
+          sudo docker run -d -p 8082:8082 solhee0912/eum-dev:lates
           sudo docker image prune -f
           ps -ef | grep java
 
