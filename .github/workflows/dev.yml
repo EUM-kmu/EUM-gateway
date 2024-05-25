@@ -41,7 +41,7 @@ jobs:
         name: cicdsample
         path: build/libs/*.jar
     - name: docker image build
-      run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/eum-dev:dev
+      run: docker build . --file Dockerfile ${{ secrets.DOCKERHUB_USERNAME }}/eum-dev:lates
 
     # DockerHub Login (push 하기 위해)
     - name: docker login
