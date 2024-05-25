@@ -82,6 +82,10 @@ jobs:
           port: 22
           script: |
             sudo docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+            if [ $(sudo docker ps -q -f name=gateway) ]; then
+              sudo docker stop gateway
+              sudo docker rm gateway
+            fi
             # sudo docker stop $(sudo docker ps -a -q)
             # sudo docker rm -f $(sudo docker ps -a -q)
             sudo docker pull solhee0912/eum-dev:lates
@@ -89,13 +93,4 @@ jobs:
             # sudo docker-compose up -d
             sudo docker image prune -f
             ps -ef | grep java
-    # - name: Deploy
-    #   uses: appleboy/ssh-action@master
-    #   with:
-    #       host: ${{ secrets.REMOTE_IP }}
-    #       username: ${{ secrets.REMOTE_SSH_ID }}
-    #       key: ${{ secrets.REMOTE_SSH_KEY }}
-    #       port: ${{ secrets.REMOTE_SSH_PORT }}
-    #       script: |
-    #         whoami
-    #         git pull origin main
+
