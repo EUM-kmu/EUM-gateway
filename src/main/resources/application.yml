@@ -74,7 +74,7 @@ spring:
           predicates:
             - Path=/ws/init/**
         - id: timebank-bank-service
-          uri: http://localhost:8080/
+          uri: http://bank:8080/
           predicates:
             - Path=/timebank-service/**
           filters:
