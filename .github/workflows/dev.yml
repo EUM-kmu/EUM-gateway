@@ -78,7 +78,7 @@ jobs:
             # sudo docker stop $(sudo docker ps -a -q)
             # sudo docker rm -f $(sudo docker ps -a -q)
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_REPO }:gateway-dev
-            sudo docker run -d -p 80:80 --network root_eum_network --name gateway ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_REPO }-dev:gateway-dev
+            sudo docker run -d -p 80:80 --network root_eum_network --name gateway ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_REPO }}dev:gateway-dev
             # sudo docker-compose up -d
             sudo docker image prune -f
             ps -ef | grep java
