@@ -35,20 +35,20 @@ spring:
     gateway:
       routes:
         - id: haetsal-service
-          uri: http://175.45.203.201:8000
+          uri: http://223.130.146.39:8000
           predicates:
             - Path=/haetsal-service/api/**
           filters:
             - RemoveRequestHeader=Cookie
             - AuthUserAuthorizationHeaderFilter
         - id: auth-service
-          uri: http://175.45.203.201:8081/
+          uri: http://223.130.146.39:8081/
           predicates:
             - Path=/auth-service/api/v2/auth/**
           filters:
             - RemoveRequestHeader=Cookie
         - id: auth-service
-          uri: http://175.45.203.201:8000/
+          uri: http://223.130.146.39:8000/
           predicates:
             - Path=/auth-service/api/v2/profile
             - Method=POST
@@ -56,21 +56,21 @@ spring:
             - RemoveRequestHeader=Cookie
             - TemptUserAuthorizationHeaderFilter
         - id: auth-service
-          uri: http://175.45.203.201:8081/
+          uri: http://223.130.146.39:8081/
           predicates:
             - Path=/auth-service/api/v2/logOut
           filters:
             - RemoveRequestHeader=Cookie
             - TemptUserAuthorizationHeaderFilter
         - id: chat-service
-          uri: http://175.45.203.201:8080/
+          uri: https://chat.haetsal.com/
           predicates:
-            - Path=/chat-service/api/**
+            - Path=/chat-service/**
           filters:
             - RemoveRequestHeader=Cookie
             - AuthUserAuthorizationHeaderFilter
         - id: chat-websocket
-          uri: ws://175.45.203.201:8080
+          uri: wss://chat.haetsal.com/
           predicates:
             - Path=/ws/init/**
         - id: timebank-bank-service

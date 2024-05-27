@@ -1,3 +1,4 @@
 # Auto detect text files and perform LF normalization
 * text=auto
 .github/workflows/dev.yml merge=servers
+src/main/resources/application.yml merge=servers
