@@ -1,7 +1,23 @@
 
 server:
   port: 80
+  forward-headers-strategy: FRAMEWORK
 
+#springdoc:
+#  enable-native-support: true
+#  api-docs:
+#    enabled: true
+#  swagger-ui:
+#    enabled: true
+#    path: /swagger-ui.html
+#    config-url: /v3/api-docs/swagger-config
+#    urls:
+#      - url: /haetsal-service/docs
+#        name: haetsal
+#      - url: /auth-service/docs
+#        name: auth
+#      - url: /chat-service/docs
+#        name: chat
 eureka:
   client:
     register-with-eureka: true
@@ -19,20 +35,20 @@ spring:
     gateway:
       routes:
         - id: haetsal-service
-          uri: http://localhost:8000
+          uri: http://175.45.203.201:8000
           predicates:
-            - Path=/haetsal-service/**
+            - Path=/haetsal-service/api/**
           filters:
             - RemoveRequestHeader=Cookie
             - AuthUserAuthorizationHeaderFilter
         - id: auth-service
-          uri: http://localhost:8081/
+          uri: http://175.45.203.201:8081/
           predicates:
             - Path=/auth-service/api/v2/auth/**
           filters:
             - RemoveRequestHeader=Cookie
         - id: auth-service
-          uri: http://localhost:8000/
+          uri: http://175.45.203.201:8000/
           predicates:
             - Path=/auth-service/api/v2/profile
             - Method=POST
@@ -40,20 +56,50 @@ spring:
             - RemoveRequestHeader=Cookie
             - TemptUserAuthorizationHeaderFilter
         - id: auth-service
-          uri: http://localhost:8081/
+          uri: http://175.45.203.201:8081/
           predicates:
             - Path=/auth-service/api/v2/logOut
           filters:
             - RemoveRequestHeader=Cookie
             - TemptUserAuthorizationHeaderFilter
         - id: chat-service
-          uri: https://chat.haetsal.com/
+          uri: http://175.45.203.201:8080/
           predicates:
-            - Path=/chat-service/**
+            - Path=/chat-service/api/**
           filters:
             - RemoveRequestHeader=Cookie
             - AuthUserAuthorizationHeaderFilter
         - id: chat-websocket
-          uri: wss://chat.haetsal.com/
+          uri: ws://175.45.203.201:8080
           predicates:
             - Path=/ws/init/**
+        - id: timebank-bank-service
+          uri: http://localhost:8080/
+          predicates:
+            - Path=/timebank-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - AuthUserAuthorizationHeaderFilter
+        - id: timebank-admin-service
+          uri: http://223.130.154.131:8081/
+          predicates:
+            - Path=/timebank-admin-service/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - AuthUserAuthorizationHeaderFilter
+
+#        - id: haetsal-swagger
+#          uri: http://localhost:8000
+#          predicates:
+#            - Path=/haetsal-service/docs/**
+#        - id: auth-swagger
+#          uri: http://localhost:8081
+#          predicates:
+#            - Path=/auth-service/docs/**
+#        - id: chat-swagger
+#          uri: http://localhost:8080
+#          predicates:
+#            - Path=/chat-service/docs/**
+
+
+
