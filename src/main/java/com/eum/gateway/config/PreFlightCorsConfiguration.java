@@ -28,7 +28,6 @@ public class PreFlightCorsConfiguration {
     private static final Set<String> allowedOrigins = new HashSet<>();
     static {
         allowedOrigins.add("http://localhost:3000");
-        allowedOrigins.add("http://localhost:58656"); // 타임뱅크 관리자 페이지
         allowedOrigins.add("https://hanmaeul.vercel.app");
         allowedOrigins.add("https://k-eum2023.web.app");
         // 다른 허용할 Origin 추가
