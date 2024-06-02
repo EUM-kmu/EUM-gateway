@@ -50,7 +50,7 @@ spring:
         - id: auth-service
           uri: http://auth:8081/
           predicates:
-            - Path=/auth-service/api/v2/setting/**
+            - Path=/auth-service/api/v2/notification
           filters:
             - RemoveRequestHeader=Cookie
             - AuthUserAuthorizationHeaderFilter
