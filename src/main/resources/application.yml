@@ -48,6 +48,13 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
         - id: auth-service
+          uri: http://auth:8081/
+          predicates:
+            - Path=/auth-service/api/v2/setting/**
+          filters:
+            - RemoveRequestHeader=Cookie
+            - AuthUserAuthorizationHeaderFilter
+        - id: auth-service
           uri: http://haetsal:8000/
           predicates:
             - Path=/auth-service/api/v2/profile
