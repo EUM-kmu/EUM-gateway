@@ -35,11 +35,6 @@ jobs:
 
     - name: Build with Gradle Wrapper
       run: ./gradlew build -x test
-    - name: Upload artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: cicdsample
-        path: build/libs/*.jar
     - name: docker image build
       run: docker build . --file Dockerfile --tag ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKER_REPO }}:gateway-dev
     # DockerHub Login (push 하기 위해)
@@ -56,10 +51,6 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: cicdsample
       - name: Login to Docker Hub
         run: sudo docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
       -  name: Deploy
