@@ -18,6 +18,6 @@
 
 ### 3. 실행방법
 ```bash
-git clone https://github.com/kookmin-sw/capstone-2024-04.git
+git clone https://github.com/EUM-kmu/EUM-gateway.git
 ./gradlew bootRun
 ```
